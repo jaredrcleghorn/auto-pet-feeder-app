@@ -1,57 +1,71 @@
 import React, { useState } from 'react';
-import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import sendConfirmationCode from '../functions/sendConfirmationCode';
+
+// Constants.
+import constants from '../constants.json';
 
 export default function EnterEmailScreen({ navigation }) {
 	// State.
 	const [email, setEmail] = useState('');
-	const [emailIsValid, setEmailIsValid] = useState(null);
+	const [isLoading, setIsLoading] = useState(false);
+	const [errorMessageText, setErrorMessageText] = useState(null);
 
 	const handleNext = () => {
+		setErrorMessageText(null);
+
 		if (/^\S+@\S+.\S+$/.test(email) === true) {
-			navigation.navigate('Create a Password');
+			setIsLoading(true);
+
+			sendConfirmationCode(email)
+				.then(response => response.ok ? navigation.navigate('Enter Confirmation Code', { email }) : null)
+				.catch(() => setErrorMessageText(constants.registrationNetworkingErrorMessageText))
+				.then(() => setIsLoading(false));
 		} else {
-			setEmailIsValid(false);
+			setErrorMessageText('Please enter a valid email.');
 		}
 	}
-	const [emailInputStyle, invalidEmailMessage] = emailIsValid === false ? [
-		invalidEmailInputStyles,
-		<Text style={styles.invalidEmailMessage}>Please enter a valid email.</Text>,
-	] : [
+	const [emailInputStyle, errorMessage] = errorMessageText === null ? [
 		styles.emailInput,
-		null,
+		null
+	] : [
+		emailInputErrorStyle,
+		<Text style={styles.errorMessage}>{errorMessageText}</Text>,
 	];
 
 	return (
 		<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
 			<View style={styles.container}>
 				<Text style={styles.title}>Enter Email</Text>
-				<View style={styles.emailInputContainer}>
-					<TextInput
-						autoCapitalize="none"
-						autoCompleteType="email"
-						autoCorrect={false}
-						autoFocus={true}
-						blurOnSubmit={false}
-						clearButtonMode="while-editing"
-						keyboardType="email-address"
-						placeholder="Email"
-						returnKeyType="next"
-						style={emailInputStyle}
-						onChangeText={text => {
-							setEmail(text);
-							setEmailIsValid(null);
-						}}
-						onFocus={() => setEmailIsValid(null)}
-						onSubmitEditing={handleNext}
-					/>
+				<View style={styles.emailInputAndErrorMessageContainer}>
+					<View style={styles.emailInputContainer}>
+						<TextInput
+							autoCapitalize="none"
+							autoCompleteType="email"
+							autoCorrect={false}
+							autoFocus={true}
+							blurOnSubmit={false}
+							clearButtonMode="while-editing"
+							keyboardType="email-address"
+							placeholder="Email"
+							returnKeyType="next"
+							style={emailInputStyle}
+							onChangeText={text => {
+								setEmail(text);
+								setErrorMessageText(null);
+							}}
+							onFocus={() => setErrorMessageText(null)}
+							onSubmitEditing={handleNext}
+						/>
+					</View>
+					{errorMessage}
 				</View>
-				{invalidEmailMessage}
 				<View style={styles.nextButtonContainer}>
-					<Button
+					{isLoading ? <ActivityIndicator /> : <Button
 						disabled={email === ''}
 						title="Next"
 						onPress={handleNext}
-					/>
+					/>}
 				</View>
 			</View>
 		</TouchableWithoutFeedback>
@@ -67,10 +81,13 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 30,
 	},
-	emailInputContainer: {
-		flexDirection: 'row',
+	emailInputAndErrorMessageContainer: {
+		alignSelf: 'stretch',
 		marginHorizontal: 30,
 		marginTop: 20,
+	},
+	emailInputContainer: {
+		flexDirection: 'row',
 	},
 	emailInput: {
 		borderColor: 'gray',
@@ -79,11 +96,7 @@ const styles = StyleSheet.create({
 		height: 40,
 		padding: 10,
 	},
-	invalidEmailInput: {
-		borderColor: 'red',
-		borderWidth: 2,
-	},
-	invalidEmailMessage: {
+	errorMessage: {
 		color: 'red',
 		marginTop: 5,
 	},
@@ -91,4 +104,9 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 	},
 });
-const invalidEmailInputStyles = StyleSheet.compose(styles.emailInput, styles.invalidEmailInput);
+const errorStyles = StyleSheet.create({
+	emailInput: {
+		borderColor: 'red',
+	},
+});
+const emailInputErrorStyle = StyleSheet.compose(styles.emailInput, errorStyles.emailInput);

@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 // Screens.
 import InitialScreen from './screens/initial-screen';
 import EnterEmailScreen from './screens/enter-email-screen';
+import EnterConfirmationCodeScreen from './screens/enter-confirmation-code-screen';
 import CreateAPasswordScreen from './screens/create-a-password-screen';
 
 const Stack = createStackNavigator();
@@ -23,6 +24,15 @@ export default function App() {
 				<Stack.Screen
 					component={EnterEmailScreen}
 					name="Enter Email"
+					options={{
+						headerBackTitleVisible: false,
+						headerTitle: '',
+						headerTransparent: true,
+					}}
+				/>
+				<Stack.Screen
+					component={EnterConfirmationCodeScreen}
+					name="Enter Confirmation Code"
 					options={{
 						headerBackTitleVisible: false,
 						headerTitle: '',
