@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 // Screens.
 import InitialScreen from './screens/initial-screen';
 import EnterEmailScreen from './screens/enter-email-screen';
+import CreateAPasswordScreen from './screens/create-a-password-screen';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,11 @@ export default function App() {
 						headerTitle: '',
 						headerTransparent: true,
 					}}
+				/>
+				<Stack.Screen
+					component={CreateAPasswordScreen}
+					name="Create a Password"
+					options={{ headerShown: false }}
 				/>
 			</Stack.Navigator>
 			<StatusBar style="auto" />

@@ -1,54 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
-export default function EnterEmailScreen({ navigation }) {
+export default function CreateAPasswordScreen() {
 	// State.
-	const [email, setEmail] = useState('');
-	const [emailIsValid, setEmailIsValid] = useState(null);
+	const [password, setPassword] = useState('');
+	const [passwordIsValid, setPasswordIsValid] = useState(null);
 
-	const handleNext = () => {
-		if (/^\S+@\S+.\S+$/.test(email) === true) {
-			navigation.navigate('Create a Password');
-		} else {
-			setEmailIsValid(false);
-		}
-	}
-	const [emailInputStyle, invalidEmailMessage] = emailIsValid === false ? [
-		invalidEmailInputStyles,
-		<Text style={styles.invalidEmailMessage}>Please enter a valid email.</Text>,
+	const handleNext = () => setPasswordIsValid(password.length >= 6);
+	const [passwordInputStyle, invalidPasswordMessage] = passwordIsValid === false ? [
+		invalidPasswordInputStyles,
+		<Text style={styles.invalidPasswordMessage}>Passwords must be at least 6 characters.</Text>,
 	] : [
-		styles.emailInput,
-		null,
+		styles.passwordInput,
+		null
 	];
 
 	return (
 		<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
 			<View style={styles.container}>
-				<Text style={styles.title}>Enter Email</Text>
-				<View style={styles.emailInputContainer}>
+				<Text style={styles.title}>Create a Password</Text>
+				<View style={styles.passwordInputContainer}>
 					<TextInput
 						autoCapitalize="none"
-						autoCompleteType="email"
+						autoCompleteType="password"
 						autoCorrect={false}
 						autoFocus={true}
 						blurOnSubmit={false}
 						clearButtonMode="while-editing"
-						keyboardType="email-address"
-						placeholder="Email"
+						placeholder="Password"
 						returnKeyType="next"
-						style={emailInputStyle}
+						secureTextEntry={true}
+						style={passwordInputStyle}
 						onChangeText={text => {
-							setEmail(text);
-							setEmailIsValid(null);
+							setPassword(text);
+							setPasswordIsValid(null);
 						}}
-						onFocus={() => setEmailIsValid(null)}
+						onFocus={() => setPasswordIsValid(null)}
 						onSubmitEditing={handleNext}
 					/>
 				</View>
-				{invalidEmailMessage}
+				{invalidPasswordMessage}
 				<View style={styles.nextButtonContainer}>
 					<Button
-						disabled={email === ''}
+						disabled={password === ''}
 						title="Next"
 						onPress={handleNext}
 					/>
@@ -67,23 +61,23 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 30,
 	},
-	emailInputContainer: {
+	passwordInputContainer: {
 		flexDirection: 'row',
 		marginHorizontal: 30,
 		marginTop: 20,
 	},
-	emailInput: {
+	passwordInput: {
 		borderColor: 'gray',
 		borderWidth: 1,
 		flex: 1,
 		height: 40,
 		padding: 10,
 	},
-	invalidEmailInput: {
+	invalidPasswordInput: {
 		borderColor: 'red',
 		borderWidth: 2,
 	},
-	invalidEmailMessage: {
+	invalidPasswordMessage: {
 		color: 'red',
 		marginTop: 5,
 	},
@@ -91,4 +85,4 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 	},
 });
-const invalidEmailInputStyles = StyleSheet.compose(styles.emailInput, styles.invalidEmailInput);
+const invalidPasswordInputStyles = StyleSheet.compose(styles.passwordInput, styles.invalidPasswordInput);
