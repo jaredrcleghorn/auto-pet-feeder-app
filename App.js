@@ -1,23 +1,35 @@
+import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+// Screens.
+import InitialScreen from './screens/initial-screen';
+import EnterEmailScreen from './screens/enter-email-screen';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Auto Pet Feeder</Text>
-      <StatusBar style="auto" />
-    </View>
+		<NavigationContainer>
+			<Stack.Navigator>
+				<Stack.Screen
+					component={InitialScreen}
+					name="Initial"
+					options={{ headerShown: false }}
+				/>
+				<Stack.Screen
+					component={EnterEmailScreen}
+					name="Enter Email"
+					options={{
+						headerBackTitleVisible: false,
+						headerTitle: '',
+						headerTransparent: true,
+					}}
+				/>
+			</Stack.Navigator>
+			<StatusBar style="auto" />
+		</NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-	title: {
-		fontSize: 30,
-	},
-});
