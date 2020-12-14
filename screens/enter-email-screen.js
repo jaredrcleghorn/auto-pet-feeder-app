@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Button, Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import sendConfirmationCode from '../functions/sendConfirmationCode';
 
 // Constants.
 import constants from '../constants.json';
+
+// Components.
+import EmailInput from '../components/email-input';
 
 export default function EnterEmailScreen({ navigation }) {
 	// State.
@@ -25,11 +28,11 @@ export default function EnterEmailScreen({ navigation }) {
 			setErrorMessageText('Please enter a valid email.');
 		}
 	}
-	const [emailInputStyle, errorMessage] = errorMessageText === null ? [
-		styles.emailInput,
+	const [textInputStyle, errorMessage] = errorMessageText === null ? [
+		null,
 		null
 	] : [
-		emailInputErrorStyle,
+		errorStyles.textInput,
 		<Text style={styles.errorMessage}>{errorMessageText}</Text>,
 	];
 
@@ -38,26 +41,15 @@ export default function EnterEmailScreen({ navigation }) {
 			<View style={styles.container}>
 				<Text style={styles.title}>Enter Email</Text>
 				<View style={styles.emailInputAndErrorMessageContainer}>
-					<View style={styles.emailInputContainer}>
-						<TextInput
-							autoCapitalize="none"
-							autoCompleteType="email"
-							autoCorrect={false}
-							autoFocus={true}
-							blurOnSubmit={false}
-							clearButtonMode="while-editing"
-							keyboardType="email-address"
-							placeholder="Email"
-							returnKeyType="next"
-							style={emailInputStyle}
-							onChangeText={text => {
-								setEmail(text);
-								setErrorMessageText(null);
-							}}
-							onFocus={() => setErrorMessageText(null)}
-							onSubmitEditing={handleNext}
-						/>
-					</View>
+					<EmailInput
+						textInputStyle={textInputStyle}
+						onChangeText={text => {
+							setEmail(text);
+							setErrorMessageText(null);
+						}}
+						onFocus={() => setErrorMessageText(null)}
+						onSubmitEditing={handleNext}
+					/>
 					{errorMessage}
 				</View>
 				<View style={styles.nextButtonContainer}>
@@ -86,16 +78,6 @@ const styles = StyleSheet.create({
 		marginHorizontal: 30,
 		marginTop: 20,
 	},
-	emailInputContainer: {
-		flexDirection: 'row',
-	},
-	emailInput: {
-		borderColor: 'gray',
-		borderWidth: 1,
-		flex: 1,
-		height: 40,
-		padding: 10,
-	},
 	errorMessage: {
 		color: 'red',
 		marginTop: 5,
@@ -105,8 +87,7 @@ const styles = StyleSheet.create({
 	},
 });
 const errorStyles = StyleSheet.create({
-	emailInput: {
+	textInput: {
 		borderColor: 'red',
 	},
 });
-const emailInputErrorStyle = StyleSheet.compose(styles.emailInput, errorStyles.emailInput);
