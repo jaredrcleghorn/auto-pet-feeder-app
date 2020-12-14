@@ -1,51 +1,80 @@
 import React, { useState } from 'react'
-import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
-export default function CreateAPasswordScreen() {
+// Config.
+import config from '../config.json';
+
+// Constants.
+import constants from '../constants.json';
+
+export default function CreateAPasswordScreen({ route, navigation }) {
 	// State.
 	const [password, setPassword] = useState('');
-	const [passwordIsValid, setPasswordIsValid] = useState(null);
+	const [isLoading, setIsLoading] = useState(false);
+	const [errorMessageText, setErrorMessageText] = useState(null);
 
-	const handleNext = () => setPasswordIsValid(password.length >= 6);
-	const [passwordInputStyle, invalidPasswordMessage] = passwordIsValid === false ? [
-		invalidPasswordInputStyles,
-		<Text style={styles.invalidPasswordMessage}>Passwords must be at least 6 characters.</Text>,
-	] : [
+	const handleNext = () => {
+		setErrorMessageText(null);
+
+		if (password.length >= 6) {
+			setIsLoading(true);
+
+			fetch(`${config.autoPetFeederApiBaseUrl}/users`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					...route.params,
+					password,
+				}),
+			})
+				.then(response => response.ok ? navigation.navigate('Home') : null)
+				.catch(() => setErrorMessageText(constants.registrationNetworkingErrorMessageText))
+				.then(() => setIsLoading(false));
+		} else {
+			setErrorMessageText('Passwords must be at least 6 characters.');
+		}
+	};
+	const [passwordInputStyle, errorMessage] = errorMessageText === null ? [
 		styles.passwordInput,
-		null
+		null,
+	] : [
+		passwordInputErrorStyle,
+		<Text style={styles.errorMessage}>{errorMessageText}</Text>,
 	];
 
 	return (
 		<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
 			<View style={styles.container}>
 				<Text style={styles.title}>Create a Password</Text>
-				<View style={styles.passwordInputContainer}>
-					<TextInput
-						autoCapitalize="none"
-						autoCompleteType="password"
-						autoCorrect={false}
-						autoFocus={true}
-						blurOnSubmit={false}
-						clearButtonMode="while-editing"
-						placeholder="Password"
-						returnKeyType="next"
-						secureTextEntry={true}
-						style={passwordInputStyle}
-						onChangeText={text => {
-							setPassword(text);
-							setPasswordIsValid(null);
-						}}
-						onFocus={() => setPasswordIsValid(null)}
-						onSubmitEditing={handleNext}
-					/>
+				<View style={styles.passwordInputAndErrorMessageContainer}>
+					<View style={styles.passwordInputContainer}>
+						<TextInput
+							autoCapitalize="none"
+							autoCompleteType="password"
+							autoCorrect={false}
+							autoFocus={true}
+							blurOnSubmit={false}
+							clearButtonMode="while-editing"
+							placeholder="Password"
+							returnKeyType="next"
+							secureTextEntry={true}
+							style={passwordInputStyle}
+							onChangeText={text => {
+								setPassword(text);
+								setErrorMessageText(null);
+							}}
+							onFocus={() => setErrorMessageText(null)}
+							onSubmitEditing={handleNext}
+						/>
+					</View>
+					{errorMessage}
 				</View>
-				{invalidPasswordMessage}
 				<View style={styles.nextButtonContainer}>
-					<Button
+					{isLoading ? <ActivityIndicator /> : <Button
 						disabled={password === ''}
 						title="Next"
 						onPress={handleNext}
-					/>
+					/>}
 				</View>
 			</View>
 		</TouchableWithoutFeedback>
@@ -61,10 +90,13 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 30,
 	},
-	passwordInputContainer: {
-		flexDirection: 'row',
+	passwordInputAndErrorMessageContainer: {
+		alignSelf: 'stretch',
 		marginHorizontal: 30,
 		marginTop: 20,
+	},
+	passwordInputContainer: {
+		flexDirection: 'row',
 	},
 	passwordInput: {
 		borderColor: 'gray',
@@ -73,11 +105,7 @@ const styles = StyleSheet.create({
 		height: 40,
 		padding: 10,
 	},
-	invalidPasswordInput: {
-		borderColor: 'red',
-		borderWidth: 2,
-	},
-	invalidPasswordMessage: {
+	errorMessage: {
 		color: 'red',
 		marginTop: 5,
 	},
@@ -85,4 +113,9 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 	},
 });
-const invalidPasswordInputStyles = StyleSheet.compose(styles.passwordInput, styles.invalidPasswordInput);
+const errorStyles = StyleSheet.create({
+	passwordInput: {
+		borderColor: 'red',
+	},
+});
+const passwordInputErrorStyle = StyleSheet.compose(styles.passwordInput, errorStyles.passwordInput);

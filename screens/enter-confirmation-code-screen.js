@@ -18,15 +18,17 @@ export default function EnterConfirmationCodeScreen({ route, navigation }) {
 	const handleNext = () => {
 		setIsLoading(true);
 
+		const user = {
+			...route.params,
+			confirmationCode,
+		};
+
 		fetch(`${config.autoPetFeederApiBaseUrl}/verifyConfirmationCode`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				...route.params,
-				confirmationCode,
-			}),
+			body: JSON.stringify(user),
 		})
-			.then(response => response.ok ? navigation.navigate('Create a Password') : setErrorMessageText("That code isn't valid. You can request a new one."))
+			.then(response => response.ok ? navigation.navigate('Create a Password', user) : setErrorMessageText("That code isn't valid. You can request a new one."))
 			.catch(() => setErrorMessageText(constants.registrationNetworkingErrorMessageText))
 			.then(() => setIsLoading(false));
 	};

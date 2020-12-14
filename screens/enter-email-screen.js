@@ -18,7 +18,7 @@ export default function EnterEmailScreen({ navigation }) {
 			setIsLoading(true);
 
 			sendConfirmationCode(email)
-				.then(response => response.ok ? navigation.navigate('Enter Confirmation Code', { email }) : null)
+				.then(response => response.ok ? navigation.navigate('Enter Confirmation Code', { email }) : setErrorMessageText('This email is on another account.'))
 				.catch(() => setErrorMessageText(constants.registrationNetworkingErrorMessageText))
 				.then(() => setIsLoading(false));
 		} else {

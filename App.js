@@ -9,6 +9,7 @@ import InitialScreen from './screens/initial-screen';
 import EnterEmailScreen from './screens/enter-email-screen';
 import EnterConfirmationCodeScreen from './screens/enter-confirmation-code-screen';
 import CreateAPasswordScreen from './screens/create-a-password-screen';
+import HomeScreen from './screens/home-screen';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +43,11 @@ export default function App() {
 				<Stack.Screen
 					component={CreateAPasswordScreen}
 					name="Create a Password"
+					options={{ headerShown: false }}
+				/>
+				<Stack.Screen
+					component={HomeScreen}
+					name="Home"
 					options={{ headerShown: false }}
 				/>
 			</Stack.Navigator>
