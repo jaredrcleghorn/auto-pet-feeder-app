@@ -9,6 +9,7 @@ import InitialScreen from './screens/initial-screen';
 import EnterEmailScreen from './screens/enter-email-screen';
 import EnterConfirmationCodeScreen from './screens/enter-confirmation-code-screen';
 import CreateAPasswordScreen from './screens/create-a-password-screen';
+import LogInScreen from './screens/log-in-screen';
 import HomeScreen from './screens/home-screen';
 
 const Stack = createStackNavigator();
@@ -44,6 +45,15 @@ export default function App() {
 					component={CreateAPasswordScreen}
 					name="Create a Password"
 					options={{ headerShown: false }}
+				/>
+				<Stack.Screen
+					component={LogInScreen}
+					name="Log In"
+					options={{
+						headerBackTitleVisible: false,
+						headerTitle: '',
+						headerTransparent: true,
+					}}
 				/>
 				<Stack.Screen
 					component={HomeScreen}
