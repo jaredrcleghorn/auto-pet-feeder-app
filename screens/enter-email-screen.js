@@ -30,7 +30,7 @@ export default function EnterEmailScreen({ navigation }) {
 	}
 	const [textInputStyle, errorMessage] = errorMessageText === null ? [
 		null,
-		null
+		null,
 	] : [
 		errorStyles.textInput,
 		<Text style={styles.errorMessage}>{errorMessageText}</Text>,
