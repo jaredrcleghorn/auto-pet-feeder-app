@@ -30,7 +30,16 @@ export default function CreateAPasswordScreen({ route, navigation }) {
 					password,
 				}),
 			})
-				.then(response => response.ok ? navigation.navigate('Home') : null)
+				.then(response => response.ok ? fetch(`${config.autoPetFeederApiBaseUrl}/tokens`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						email: route.params.email,
+						password,
+					}),
+				}) : null)
+				.then(response => response.ok ? response.json() : null)
+				.then(json => navigation.navigate('Add a Feeder', { token: json.token }))
 				.catch(() => setErrorMessageText(constants.registrationNetworkingErrorMessageText))
 				.then(() => setIsLoading(false));
 		} else {
