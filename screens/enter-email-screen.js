@@ -27,7 +27,7 @@ export default function EnterEmailScreen({ navigation }) {
 		} else {
 			setErrorMessageText('Please enter a valid email.');
 		}
-	}
+	};
 	const [textInputStyle, errorMessage] = errorMessageText === null ? [
 		null,
 		null,
