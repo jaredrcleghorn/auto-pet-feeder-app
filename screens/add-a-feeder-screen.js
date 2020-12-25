@@ -22,7 +22,7 @@ export default function AddAFeederScreen({ route, navigation }) {
 			},
 			body: JSON.stringify({ name }),
 		})
-			.then(response => response.ok ? navigation.navigate('Home') : null)
+			.then(response => response.ok ? navigation.navigate('Connect to Your Feeder') : null)
 			.catch(() => setErrorMessageText("Sorry, we couldn't add your feeder. Please confirm you have an internet connection and try again in a moment."))
 			.then(() => setIsLoading(false));
 	};

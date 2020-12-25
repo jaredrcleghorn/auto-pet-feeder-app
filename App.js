@@ -10,6 +10,7 @@ import EnterEmailScreen from './screens/enter-email-screen';
 import EnterConfirmationCodeScreen from './screens/enter-confirmation-code-screen';
 import CreateAPasswordScreen from './screens/create-a-password-screen';
 import AddAFeederScreen from './screens/add-a-feeder-screen';
+import ConnectToYourFeeder from './screens/connect-to-your-feeder-screen';
 import LogInScreen from './screens/log-in-screen';
 import HomeScreen from './screens/home-screen';
 
@@ -50,6 +51,11 @@ export default function App() {
 				<Stack.Screen
 					component={AddAFeederScreen}
 					name="Add a Feeder"
+					options={{ headerShown: false }}
+				/>
+				<Stack.Screen
+					component={ConnectToYourFeeder}
+					name="Connect to Your Feeder"
 					options={{ headerShown: false }}
 				/>
 				<Stack.Screen
